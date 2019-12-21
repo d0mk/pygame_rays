@@ -3,53 +3,94 @@ import random
 import math
 
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 600
+# SCREEN_WIDTH = 1000
+# SCREEN_HEIGHT = 600
 
 
 class LightSource:
     def __init__(self, x, y):
-        self.color = pygame.Color(255, 0, 0)
         self.x = x
         self.y = y
-        self.radius = 5
-        self.move_speed = 5
+        self.radius = 1
+        self.color = pygame.Color(255, 255, 0)
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
 
-    def update(self, keys):
+    def update(self):
         self.x, self.y = pygame.mouse.get_pos()
 
-        # if self.x < 0: self.x = 0
-        # if self.x > SCREEN_WIDTH - 1: self.x = SCREEN_WIDTH - 1
-        # if self.y < 0: self.y = 0
-        # if self.y > SCREEN_HEIGHT - 1: self.y = SCREEN_HEIGHT - 1
+
+# def draw_board(screen, elements):
+#     for start, end in elements:
+#         pygame.draw.line(screen, pygame.Color(255, 255, 255), start, end, 2)
 
 
-def draw_board(screen, elements):
-    for start, end in elements:
-        pygame.draw.line(screen, pygame.Color(255, 255, 255), start, end)
+class Board:
+    def __init__(self):
+        pygame.init()
+        self.initialize_board()
+        self.generate_obstacles()
+
+    
+    def initialize_board(self):
+        self.screen_width = 800
+        self.screen_height = 600
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        self.FPS = 120
+        self.clock = pygame.time.Clock()
+        self.num_of_obstacles = 5
+        self.rays = None
+        self.ray_color = pygame.Color(255, 255, 0)
+        self.wall_color = pygame.Color(255, 255, 255)
+
+    
+    def generate_obstacles(self):
+        self.obstacles = []
+
+        obstacles.append(((0, 0), (0, SCREEN_HEIGHT - 1)))
+        obstacles.append(((SCREEN_WIDTH - 1, 0), (SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)))
+        obstacles.append(((0, 0), (SCREEN_WIDTH - 1, 0)))
+        obstacles.append(((0, SCREEN_HEIGHT - 1), (SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)))
+
+        for _ in range(self.num_of_obstacles):
+            start = random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)
+            end = random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)
+            obstacles.append((start, end))
+
+    
+    def draw(self):
+        for start, end in self.rays:
+            pygame.draw.line(screen, self.ray_color, start, end)
+
+        for start, end in self.obstacles:
+            pygame.draw.line(screen, self.wall_color, start, end, 2)
 
 
-def generate_obstacles(num_of_obstacles):
-    obstacles = []
+    def start(self):
+        light_source = LightSource(self.screen_width // 2, self.screen_height // 2)
 
-    obstacles.append(((0, 0), (0, SCREEN_HEIGHT - 1)))
-    obstacles.append(((SCREEN_WIDTH - 1, 0), (SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)))
-    obstacles.append(((0, 0), (SCREEN_WIDTH - 1, 0)))
-    obstacles.append(((0, SCREEN_HEIGHT - 1), (SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)))
+        
 
-    for _ in range(num_of_obstacles):
-        start = random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)
-        end = random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)
-        obstacles.append((start, end))
 
-    return obstacles
+# def generate_obstacles(num_of_obstacles):
+#     obstacles = []
+
+#     obstacles.append(((0, 0), (0, SCREEN_HEIGHT - 1)))
+#     obstacles.append(((SCREEN_WIDTH - 1, 0), (SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)))
+#     obstacles.append(((0, 0), (SCREEN_WIDTH - 1, 0)))
+#     obstacles.append(((0, SCREEN_HEIGHT - 1), (SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1)))
+
+#     for _ in range(num_of_obstacles):
+#         start = random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)
+#         end = random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT)
+#         obstacles.append((start, end))
+
+#     return obstacles
 
 
 def cast_rays(source, obstacles):
-    num_of_rays = 100
+    num_of_rays = 200
     angle_increment = 2 * math.pi / num_of_rays
     max_ray_length = math.sqrt(SCREEN_WIDTH ** 2 + SCREEN_HEIGHT ** 2)
 
@@ -95,16 +136,12 @@ def cast_rays(source, obstacles):
     return rays
 
 
-def draw_rays(screen, rays):
-    for start, end in rays:
-        pygame.draw.line(screen, pygame.Color(255, 255, 0), start, end)
+# def draw_rays(screen, rays):
+#     for start, end in rays:
+#         pygame.draw.line(screen, pygame.Color(255, 255, 0), start, end)
 
 
 def main():
-    # background_color = pygame.Color(0, 0, 0)
-    # borders_color = pygame.Color(255, 255, 255)
-    # ray_color = pygame.Color(255, 255, 0)
-
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
@@ -118,9 +155,9 @@ def main():
             if event.type == pygame.QUIT:
                 exit()
 
-        pressed_keys = pygame.key.get_pressed()
+        # pressed_keys = pygame.key.get_pressed()
 
-        light_source.update(pressed_keys)
+        light_source.update()
         rays = cast_rays((light_source.x, light_source.y), obstacles)
 
         screen.fill(pygame.Color(0, 0, 0))
