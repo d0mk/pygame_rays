@@ -1,6 +1,6 @@
 # pygame_rays
 
-My implementation of simple raycasting system, inspired by The Coding Train's (youtube channel) video . The user can control the light source with mouse.
+My implementation of simple raycasting system, inspired by The Coding Train's (youtube channel) video. The user can control the light source with mouse.
 
 Run the program by starting the 'main.py' script.
 
